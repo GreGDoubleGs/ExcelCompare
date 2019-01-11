@@ -1,0 +1,13 @@
+# kopiowanie poszczególnych miast z pliku miastaSuma 
+import pandas as pd
+print(datetime.datetime.now())
+miastaSuma = pd.read_excel("\\\\net\\network\\PROJEKTY\\PD\GG\\PEŁNE PLIKI MIAST\\UzupelnioneMiastaSuma.xlsx")
+
+
+listOfCities = ["Aleksandrów Łódzki", "Białystok", "Jelenia Góra", "Gdańsk", "Katowice"]
+
+for miasto in listOfCities:
+    miastoo = miastaSuma[miastaSuma["Miasto"] == miasto]
+    miastoo.to_excel("\\\\net\\network\\PROJEKTY\\PD\GG\\PEŁNE PLIKI MIAST\\Czyste Miasta\\Czyste" + miasto + "_raport.xlsx", sheet_name = "Raport", index = False, startrow = 0, startcol = 0)
+    
+print(datetime.datetime.now())
