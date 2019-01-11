@@ -1,0 +1,18 @@
+# Uzupełnianie ID Budynku z pliku p.Łęczyckiego
+import openpyxl
+import pandas as pd
+import datetime
+print(datetime.datetime.now())
+
+leczycki = pd.read_excel("\\\\net\\network\\PROJEKTY\\PD\\GG\\Łęczycki_zmodyfikowany.xlsx") # nie nakierowywac sie bezpośrednio na plik Piotra przy uzupelnianiu budynków, plik Piotra będzie na bieżaco zmieniany do potrzeb listy budynków
+miastaSuma = pd.read_excel("\\\\net\\network\\PROJEKTY\\PD\GG\\PEŁNE PLIKI MIAST\\UzupelnioneMiastaSuma.xlsx")
+
+miastaSuma = pd.merge(miastaSuma, leczycki,how = "left",  on = ["Wojewodztwo", 'Miasto','Ulica','Nr_budynku'], indicator=True) 
+miastaSuma.loc[(miastaSuma["_merge"] == "both") & (miastaSuma["ID_budynku_x"].isna()), "ID_budynku_x"] = miastaSuma["ID_budynku_y"]
+miastaSuma = miastaSuma[miastaSuma.columns[0:35]]
+miastaSuma.columns = ["ID_budynku", "RSU", "Technologia", "OLT", "SWITCH", "Wojewodztwo", "Miasto", "Ulica", "Nr_budynku", "Liczba_HP", "Nr_projektu", "Kierownik_projektu", "WZM_archiwa", "Aktualizacja_WZM", "Kontakt do WZM", "Umowa_WZM",  " Korespondencja z WZM", "Wykonanie_prac_projektowych_PL", "Wykonanie_prac_projektowych_WYK", "Gotowosc_infrastruktury_PL", "Gotowosc_infrastruktury_WYK", "Przekazanie_do_utrzymania", "Liczba_HP_(potwierdzona)", "Gotowosc_do_sprzedazy_PL", "Gotowosc_do_sprzedazy_WYK", "Zakonczenie_projektu", "Wykluczenie_z_realizacji", "Uwagi", "Konkurencja", "Data_ostatniej_aktualizacji", "Firma_realizaująca", "Przyczyna_opóźnień", "Gotowa sieć magistralna", "Gotowa sieć budynkowa i dosyłowa","Ocena"]
+miastaSuma.to_excel("\\\\net\\network\\PROJEKTY\\PD\GG\\PEŁNE PLIKI MIAST\\UzupelnioneMiastaSuma.xlsx", index = False)
+# dodawanie budynków od P.Łęczyckiego
+
+
+print(datetime.datetime.now())
