@@ -1,0 +1,50 @@
+# Z czystych dodaje do oryginalnych plików miast
+import openpyxl
+from win32com.client import Dispatch
+import win32clipboard
+print(datetime.datetime.now())
+listOfCities = ["Aleksandrów Łódzki", "Białystok", "Jelenia Góra", "Gdańsk", "Katowice"]
+
+for miasto in listOfCities:
+    
+    
+    wb1 = openpyxl.load_workbook("\\\\net\\network\\PROJEKTY\\PD\GG\\PEŁNE PLIKI MIAST\\" + miasto +  "_raport.xlsx")
+    ws1 = wb1['Raport']
+    wb2 = openpyxl.load_workbook("\\\\net\\network\\PROJEKTY\\PD\GG\\PEŁNE PLIKI MIAST\\Czyste Miasta\\Czyste" + miasto +  "_raport.xlsx")
+    ws2 = wb2['Raport']
+    
+    startKopiowaniaMiasta = 0
+    
+    for i in range(1, ws1.max_row):
+        if ws1.cell(row = i , column = 1).value == "ID_budynku" and ws1.cell(row = i + 1 , column = 1).value == "tekst" \
+        and  type(ws1.cell(row = i + 2 , column = 1).value) == int:
+            startKopiowaniaMiasta = i + 2
+        elif ws1.cell(row = i , column = 1).value == "ID_budynku" and type(ws1.cell(row = i + 2 , column = 1).value) == int:
+            startKopiowaniaMiasta = i + 1  
+    
+    # dodaje dwie kolumny po kolumnie 35
+    ws1.insert_cols(36,2)
+    wb1.save("\\\\net\\network\\PROJEKTY\\PD\GG\\PEŁNE PLIKI MIAST\\" + miasto +  "_raport.xlsx")
+    
+    # dodaje róznice wierszy miedzy wartosciami kopiowanymi a istniejacymi z dolu pliku żródłowego 
+    
+
+    
+    # kopiowanie samych wartości z plików czystych do plików oryginalnych. format plików oryginalnych pozostaje niezmieniony
+    wkbk1 = "\\\\net\\network\\PROJEKTY\\PD\\GG\\PEŁNE PLIKI MIAST\\Czyste Miasta\\Czyste" + miasto + "_raport.xlsx"
+    wkbk2 = "\\\\net\\network\\PROJEKTY\\PD\\GG\\PEŁNE PLIKI MIAST\\" + miasto + "_raport.xlsx"
+    excel = Dispatch("Excel.Application")
+    source = excel.Workbooks.Open(wkbk1)
+    excel.Range("A2:AK%d" % ws2.max_row).Select() # skopiuj od poczatku do konca dataframu
+    excel.Selection.Copy()
+    copy = excel.Workbooks.Open(wkbk2)
+    excel.Range("A%d:AK%d" % (startKopiowaniaMiasta,ws2.max_row + startKopiowaniaMiasta)).Select() # skopiuj tam, gdzie zaczynały sie dane w oryginalnym pliku
+    excel.Selection.PasteSpecial(Paste=-4163)
+    win32clipboard.OpenClipboard()
+    win32clipboard.EmptyClipboard()
+    win32clipboard.CloseClipboard()
+    copy.Close(SaveChanges = 1)
+    source.Close(SaveChanges = 0)
+# zapisz plik w którym skopiowałeś
+print(datetime.datetime.now())
+
