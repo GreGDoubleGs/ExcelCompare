@@ -1,0 +1,23 @@
+# Uzupelnianie budynków od P.Łęczyckiego 
+
+import pandas as pd
+import datetime
+print(datetime.datetime.now())
+
+'''listOfTechnologies = ["62_CU", "60_CU_30", "63_CU_ograniczenia_TTC", "61_CU_30_ograniczenia_TTC", "77_ETTH_Internetia_0", "74_ETTH_Internetia_m30", \ 
+"70_ETTH_Internetia_30", "71_ETTH_Internetia_m30_Sieć_XXI", "75_ETTH_Internetia_0_Siec_XXI", "76_ETTH_Internetia_0_Deweloperka"]
+'''
+for miasto in listOfCities:
+    miastaSuma = pd.read_excel("\\\\net\\network\\PROJEKTY\\PD\GG\\PEŁNE PLIKI MIAST\\UzupelnioneMiastaSuma.xlsx")
+    brakująceWiersze = pd.merge(leczycki[leczycki["Miasto"] == miasto],miastaSuma, how='outer',on = ['Miasto','Ulica','Nr_budynku'],  indicator=True) 
+    brakująceWiersze = brakująceWiersze[brakująceWiersze["_merge"] == "left_only"]
+    brakująceWiersze = brakująceWiersze[brakująceWiersze.columns[0:35]]
+    brakująceWiersze.columns = ["ID_budynku", "RSU", "Technologia", "OLT", "SWITCH", "Wojewodztwo", "Miasto", "Ulica", "Nr_budynku", "Liczba_HP", "Nr_projektu", "Kierownik_projektu", "WZM_archiwa", "Aktualizacja_WZM", "Kontakt do WZM", "Umowa_WZM",  " Korespondencja z WZM", "Wykonanie_prac_projektowych_PL", "Wykonanie_prac_projektowych_WYK", "Gotowosc_infrastruktury_PL", "Gotowosc_infrastruktury_WYK", "Przekazanie_do_utrzymania", "Liczba_HP_(potwierdzona)", "Gotowosc_do_sprzedazy_PL", "Gotowosc_do_sprzedazy_WYK", "Zakonczenie_projektu", "Wykluczenie_z_realizacji", "Uwagi", "Konkurencja", "Data_ostatniej_aktualizacji", "Firma_realizaująca", "Przyczyna_opóźnień", "Gotowa sieć magistralna", "Gotowa sieć budynkowa i dosyłowa","Ocena"]
+    miastaSuma = pd.concat([miastaSuma, brakująceWiersze], join = 'outer', sort=False)
+    miastaSuma = miastaSuma[miastaSuma.columns[0:35]]
+    miastaSuma.columns = ["ID_budynku", "RSU", "Technologia", "OLT", "SWITCH", "Wojewodztwo", "Miasto", "Ulica", "Nr_budynku", "Liczba_HP", "Nr_projektu", "Kierownik_projektu", "WZM_archiwa", "Aktualizacja_WZM", "Kontakt do WZM", "Umowa_WZM",  " Korespondencja z WZM", "Wykonanie_prac_projektowych_PL", "Wykonanie_prac_projektowych_WYK", "Gotowosc_infrastruktury_PL", "Gotowosc_infrastruktury_WYK", "Przekazanie_do_utrzymania", "Liczba_HP_(potwierdzona)", "Gotowosc_do_sprzedazy_PL", "Gotowosc_do_sprzedazy_WYK", "Zakonczenie_projektu", "Wykluczenie_z_realizacji", "Uwagi", "Konkurencja", "Data_ostatniej_aktualizacji", "Firma_realizaująca", "Przyczyna_opóźnień", "Gotowa sieć magistralna", "Gotowa sieć budynkowa i dosyłowa","Ocena"]
+
+    miastaSuma.to_excel("\\\\net\\network\\PROJEKTY\\PD\GG\\PEŁNE PLIKI MIAST\\UzupelnioneMiastaSuma.xlsx", index = False)
+    
+
+print(datetime.datetime.now())
