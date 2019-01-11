@@ -1,0 +1,55 @@
+# UZUPELNIANIE MIASTA SUME O NOWE POZYCJE BUDYNKOW Z POSZCZEGOLNYCH MIAST  pętla
+
+
+import openpyxl
+import pandas as pd
+import datetime
+print(datetime.datetime.now())
+
+listOfCities = ["Aleksandrów Łódzki", "Białystok", "Jelenia Góra", "Gdańsk", "Katowice"]
+
+
+
+for miasto in listOfCities:
+    try:
+        wbMiasto = openpyxl.load_workbook("\\\\net\\network\\PROJEKTY\\PD\GG\\PEŁNE PLIKI MIAST\\" + miasto +  "_raport.xlsx")
+        wsMiasto = wbMiasto['Raport']
+    except FileNotFoundError as e:
+        print("Brak pliku " + miasto +  " o podanej ścieżce")
+        continue
+    wbczysteMiasto = openpyxl.load_workbook("\\\\net\\network\\PROJEKTY\\PD\GG\\PEŁNE PLIKI MIAST\\Czyste Miasta\\Czyste" + miasto +  "_raport.xlsx")
+    wsczysteMiasto = wbczysteMiasto['Raport']
+    
+    startKopiowaniaMiasta = 0
+
+    for i in range(1, wsMiasto.max_row):
+        if wsMiasto.cell(row = i , column = 1).value == "ID_budynku" and wsMiasto.cell(row = i + 1 , column = 1).value == "tekst" \
+        and  type(wsMiasto.cell(row = i + 2 , column = 1).value) == int:
+            startKopiowaniaMiasta = i
+        elif wsMiasto.cell(row = i , column = 1).value == "ID_budynku" and type(wsMiasto.cell(row = i + 2 , column = 1).value) == int:
+            startKopiowaniaMiasta = i
+
+
+    for r in range(startKopiowaniaMiasta, wsMiasto.max_row + 1):
+        for c in range(1, 36):
+            wsczysteMiasto.cell(row = r - startKopiowaniaMiasta + 1, column = c).value = wsMiasto.cell(row = r, column = c).value
+
+    wbczysteMiasto.save("\\\\net\\network\\PROJEKTY\\PD\GG\\PEŁNE PLIKI MIAST\\Czyste Miasta\\Czyste" + miasto +  "_raport.xlsx")            
+
+    czysteMiasto = pd.read_excel("\\\\net\\network\\PROJEKTY\\PD\GG\\PEŁNE PLIKI MIAST\\Czyste Miasta\\Czyste" + miasto +  "_raport.xlsx")   
+    
+    
+   # aktualizowanie budynków z poszczególnych miast w miastaSuma 
+    miastaSuma = pd.read_excel("\\\\net\\network\\PROJEKTY\\PD\GG\\PEŁNE PLIKI MIAST\\UzupelnioneMiastaSuma.xlsx")
+    
+    zKtorejTabeli = pd.merge(czysteMiasto,miastaSuma[miastaSuma["Miasto"] == miasto], how='outer',on = ['Miasto','Ulica','Nr_budynku'],  indicator=True) 
+    tylkoBrakujaceWiersze = zKtorejTabeli[zKtorejTabeli["_merge"] == "left_only"]
+    tylkoBrakujaceWiersze = tylkoBrakujaceWiersze[tylkoBrakujaceWiersze["Miasto"] == miasto ]
+    tylkoBrakujaceWiersze = tylkoBrakujaceWiersze[tylkoBrakujaceWiersze.columns[0:35]]
+    tylkoBrakujaceWiersze.columns = ["ID_budynku", "RSU", "Technologia", "OLT", "SWITCH", "Wojewodztwo", "Miasto", "Ulica", "Nr_budynku", "Liczba_HP", "Nr_projektu", "Kierownik_projektu", "WZM_archiwa", "Aktualizacja_WZM", "Kontakt do WZM", "Umowa_WZM",  " Korespondencja z WZM", "Wykonanie_prac_projektowych_PL", "Wykonanie_prac_projektowych_WYK", "Gotowosc_infrastruktury_PL", "Gotowosc_infrastruktury_WYK", "Przekazanie_do_utrzymania", "Liczba_HP_(potwierdzona)", "Gotowosc_do_sprzedazy_PL", "Gotowosc_do_sprzedazy_WYK", "Zakonczenie_projektu", "Wykluczenie_z_realizacji", "Uwagi", "Konkurencja", "Data_ostatniej_aktualizacji", "Firma_realizaująca", "Przyczyna_opóźnień", "Gotowa sieć magistralna", "Gotowa sieć budynkowa i dosyłowa","Ocena"]
+
+    miastaSuma = pd.concat([miastaSuma, tylkoBrakujaceWiersze], join = 'outer', sort=False)
+    miastaSuma = miastaSuma[miastaSuma.columns[0:35]]
+    miastaSuma.to_excel("\\\\net\\network\\PROJEKTY\\PD\GG\\PEŁNE PLIKI MIAST\\UzupelnioneMiastaSuma.xlsx", index = False)
+
+print(datetime.datetime.now())
