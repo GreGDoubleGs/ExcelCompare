@@ -4,9 +4,7 @@ import pandas as pd
 import datetime
 print(datetime.datetime.now())
 
-'''listOfTechnologies = ["62_CU", "60_CU_30", "63_CU_ograniczenia_TTC", "61_CU_30_ograniczenia_TTC", "77_ETTH_Internetia_0", "74_ETTH_Internetia_m30", \ 
-"70_ETTH_Internetia_30", "71_ETTH_Internetia_m30_Sieć_XXI", "75_ETTH_Internetia_0_Siec_XXI", "76_ETTH_Internetia_0_Deweloperka"]
-'''
+
 for miasto in listOfCities:
     miastaSuma = pd.read_excel("\\\\net\\network\\PROJEKTY\\PD\GG\\PEŁNE PLIKI MIAST\\UzupelnioneMiastaSuma.xlsx")
     brakująceWiersze = pd.merge(leczycki[leczycki["Miasto"] == miasto],miastaSuma, how='outer',on = ['Miasto','Ulica','Nr_budynku'],  indicator=True) 
